@@ -51,8 +51,8 @@ function handleSheetData(sheetData) {
 
 // Function to load data from Google Sheets
 function loadGoogleSheetData() {
-    const spreadsheetId = 'your_spreadsheet_id_here';
-    const apiKey = 'your_api_key_here';
+    const spreadsheetId = '1Fb7arltsEVfxRTm8o5wJ12Gb90n-oyWgA1po6jAB2ts';
+    const apiKey = 'AIzaSyB1RrNZJCDKBkWl4htKf3C0VtuGSj4LZ2s';
     const range = 'Sheet1';
 
     // Construct the URL for the Google Sheets API
