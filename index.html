@@ -4,8 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="data.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
-    <script src="script.js"></script>
+    <script>
+        // When the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch data from Google Sheets and log it
+            const sheetData = DataModule.getSheetData();
+            console.log(sheetData);
+
+            // You can also handle the data in other ways
+            // For example, passing it to another module or function
+        });
+    </script>
+
 </body>
 </html>
