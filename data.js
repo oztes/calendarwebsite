@@ -50,6 +50,36 @@ function handleSheetData(sheetData) {
     });
 }
 
+
+
+// Sets up the calendar structure
+function createCalendarStructure() {
+    const calendarContainer = document.getElementById('calendar');
+    calendarContainer.innerHTML = ''; // Clearing any old content
+
+  
+    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    // Create columns for each day with time slots
+    daysOfWeek.forEach(day => {
+        const dayColumn = document.createElement('div');
+        dayColumn.classList.add('day-column');
+        dayColumn.innerHTML = `<h3>${day}</h3>`;
+
+        // Generate time slots for each day
+        for (let hour = 0; hour < 24; hour++) {
+            for (let minute = 0; minute < 60; minute += 10) {
+                const timeSlot = document.createElement('div');
+                timeSlot.classList.add('time-slot');
+                timeSlot.id = `${day}-${hour}-${minute}`; // Unique ID for each slot
+                dayColumn.appendChild(timeSlot);
+            }
+        }
+
+        calendarContainer.appendChild(dayColumn); // Add the day column to the calendar
+    });
+}
+
 // Loads data from Google Sheets
 function loadGoogleSheetData() {
 
@@ -72,34 +102,6 @@ function loadGoogleSheetData() {
         .catch(error => {
             console.error('Error:', error);
         });
-}
-
-// Sets up the calendar structure
-function createCalendarStructure() {
-    const calendarContainer = document.getElementById('calendar');
-    calendarContainer.innerHTML = ''; // Clear any old content
-
-    // Days of the week
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-    // Create columns for each day with time slots
-    daysOfWeek.forEach(day => {
-        const dayColumn = document.createElement('div');
-        dayColumn.classList.add('day-column');
-        dayColumn.innerHTML = `<h3>${day}</h3>`;
-
-        //  generate the time slots for each day
-        for (let hour = 0; hour < 24; hour++) {
-            for (let minute = 0; minute < 60; minute += 10) {
-                const timeSlot = document.createElement('div');
-                timeSlot.classList.add('time-slot');
-                timeSlot.id = `${day}-${hour}-${minute}`; // Unique ID for each slot
-                dayColumn.appendChild(timeSlot);
-            }
-        }
-
-        calendarContainer.appendChild(dayColumn); // Add the day column to the calendar
-    });
 }
 
 loadGoogleSheetData();
