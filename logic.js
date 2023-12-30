@@ -1,4 +1,4 @@
-
+// This function will handle the data and convert it to JSON
 function handleSheetData(sheetData) {
     const headers = sheetData.values[0];
     const rows = sheetData.values.slice(1); // Excludes the first row of headers
@@ -10,42 +10,22 @@ function handleSheetData(sheetData) {
         return rowData;
     });
 
-    // Display the data in a table
-    displayDataAsTable(jsonData);
+    // Here we have the data in JSON format
+    console.log(jsonData);
+
+    // TODO: Use jsonData as needed
 }
 
-function displayDataAsTable(data) {
-    const container = document.getElementById('data-table');
-    let table = '<table><tr>';
-    
-    // Add headers
-    if(data.length > 0) {
-        Object.keys(data[0]).forEach(header => {
-            table += `<th>${header}</th>`;
-        });
-        table += '</tr>';
-    
-        // Add row data
-        data.forEach(row => {
-            table += '<tr>';
-            Object.values(row).forEach(value => {
-                table += `<td>${value}</td>`;
-            });
-            table += '</tr>';
-        });
-    }
-
-    table += '</table>';
-    container.innerHTML = table;
-}
-
+// This function will load the Google Sheet data
 function loadGoogleSheetData() {
     const spreadsheetId = '1Fb7arltsEVfxRTm8o5wJ12Gb90n-oyWgA1po6jAB2ts';
-    const apiKey = 'AIzaSyB1RrNZJCDKBkWl4htKf3C0VtuGSj4LZ2s'; 
-    const range = 'Sheet1';
+    const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+    const range = 'Sheet1'; // Update the range to include all columns we need
 
+    // Construct the URL for the Google Sheets API request
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
 
+    // Fetch the data
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -54,6 +34,7 @@ function loadGoogleSheetData() {
             return response.json();
         })
         .then(data => {
+            // Pass the sheet data to the handler function
             handleSheetData(data);
         })
         .catch(error => {
@@ -61,4 +42,5 @@ function loadGoogleSheetData() {
         });
 }
 
+// Call the function to load the data
 loadGoogleSheetData();
