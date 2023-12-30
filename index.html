@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // Your spreadsheet key here.
+        const key = "1Fb7arltsEVfxRTm8o5wJ12Gb90n-oyWgA1po6jAB2ts";
+
+        // Google API request URLs.
+        const url1 = `https://spreadsheets.google.com/feeds/cells/${key}/od6/public/values?alt=json`;
+        const url2 = `https://spreadsheets.google.com/feeds/list/${key}/od6/public/values?alt=json`;
+
+        // Function to convert the first row to keys for JSON object.
+        const getNewKeys = async () => {
+            const response = await fetch(url1);
+            const data = await response.json();
+            const newKeys = [];
+
+            data.feed.entry.forEach(item => {
+                if (item.gs$cell.row === '1') {
+                    newKeys.push(item.content.$t);
+                }
+            });
+
+            return newKeys;
+        };
+
+        // Function to map entries to new keys.
+        const remapEntriesToNewKeys = async (newKeys) => {
+            const response = await fetch(url2);
+            const data = await response.json();
+            const newData = [];
+
+            data.feed.entry.forEach(entry => {
+                const rowData = {};
+                newKeys.forEach(key => {
+                    const sanitizedKey = key.toLowerCase().replace(/ /g, '');
+                    rowData[key] = entry[`gsx$${sanitizedKey}`] ? entry[`gsx$${sanitizedKey}`].$t : '';
+                });
+                newData.push(rowData);
+            });
+
+            return newData;
+        };
+
+        // Function to handle the converted JSON.
+        const handleJsonData = (json) => {
+            console.log(json);
+            // Here you can handle the JSON data, e.g., display it on your webpage.
+            // For example:
+            // document.getElementById('myData').textContent = JSON.stringify(json, null, 2);
+        };
+
+        // Main function to convert Sheet data to JSON.
+        const convertSheetToJson = async () => {
+            try {
+                const newKeys = await getNewKeys();
+                const newData = await remapEntriesToNewKeys(newKeys);
+                handleJsonData(newData);
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        };
+
+        // Run the main function.
+        convertSheetToJson();
+    </script>
+</body>
+</html>
