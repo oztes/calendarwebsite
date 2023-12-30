@@ -33,9 +33,26 @@ function handleSheetData(sheetData) {
         events: calendarEvents
     });
 
+    createCalendarStructure();
+    jsonData.forEach(event => {
+        const eventDate = new Date(event.Date);
+        const dayName = eventDate.toLocaleString('en-US', { weekday: 'long' });
+        const hour = eventDate.getHours();
+        const minute = eventDate.getMinutes();
+
+        const eventElement = document.createElement('div');
+        eventElement.classList.add('event');
+        eventElement.textContent = event['Event Title'];
+
+        const slotId = `${dayName}-${hour}-${minute}`;
+        const timeSlot = document.getElementById(slotId);
+        if (timeSlot) {
+            timeSlot.appendChild(eventElement);
+        }
+    });
+
     calendar.render();
 }
-
 
 
 function loadGoogleSheetData() {
@@ -60,4 +77,34 @@ function loadGoogleSheetData() {
             console.error('Error:', error);
         });
 }
+
+
+
+function createCalendarStructure() {
+    const calendarContainer = document.getElementById('calendar');
+    calendarContainer.innerHTML = ''; // Clear previous content
+
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    daysOfWeek.forEach(day => {
+        const dayColumn = document.createElement('div');
+        dayColumn.classList.add('day-column');
+        dayColumn.innerHTML = `<h3>${day}</h3>`;
+
+        for (let hour = 0; hour < 24; hour++) {
+            for (let minute = 0; minute < 60; minute += 10) {
+                const timeSlot = document.createElement('div');
+                timeSlot.classList.add('time-slot');
+                timeSlot.id = `${day}-${hour}-${minute}`;
+                dayColumn.appendChild(timeSlot);
+            }
+        }
+
+        calendarContainer.appendChild(dayColumn);
+    });
+}
+
+
+
 loadGoogleSheetData();
+
+
