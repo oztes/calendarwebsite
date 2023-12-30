@@ -9,31 +9,8 @@ function handleSheetData(sheetData) {
         return rowData;
     });
 
-    // Filter events for the current week
-    const startOfWeek = moment().startOf('week');
-    const endOfWeek = moment().endOf('week');
-    const weeklyEvents = jsonData.filter(event => {
-        const eventDate = moment(event.Date, 'M/D/YYYY');
-        return eventDate.isBetween(startOfWeek, endOfWeek, null, '[]');
-    });
+    createCalendarStructure(); // Generate the calendar structure
 
-    // Map events to calendar format
-    const calendarEvents = weeklyEvents.map(event => ({
-        title: event['Event Title'],
-        start: moment(event.Date, 'M/D/YYYY').format('YYYY-MM-DD'),
-        description: event['Event Description'],
-        location: event.Location
-    }));
-
-    // Initialize calendar
-    const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        plugins: ['dayGrid'],
-        defaultView: 'dayGridWeek',
-        events: calendarEvents
-    });
-
-    createCalendarStructure();
     jsonData.forEach(event => {
         const eventDate = new Date(event.Date);
         const dayName = eventDate.toLocaleString('en-US', { weekday: 'long' });
@@ -44,14 +21,14 @@ function handleSheetData(sheetData) {
         eventElement.classList.add('event');
         eventElement.textContent = event['Event Title'];
 
-        const slotId = `${dayName}-${hour}-${minute}`;
+        // Adjust minute to fit into the 10-minute interval slots
+        const adjustedMinute = Math.floor(minute / 10) * 10;
+        const slotId = `${dayName}-${hour}-${adjustedMinute}`;
         const timeSlot = document.getElementById(slotId);
         if (timeSlot) {
             timeSlot.appendChild(eventElement);
         }
     });
-
-    calendar.render();
 }
 
 
