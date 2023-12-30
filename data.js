@@ -1,7 +1,6 @@
-
 function handleSheetData(sheetData) {
     const headers = sheetData.values[0];
-    const rows = sheetData.values.slice(1); // Excludes the first row of headers
+    const rows = sheetData.values.slice(1); 
     const jsonData = rows.map((row) => {
         let rowData = {};
         row.forEach((value, index) => {
@@ -10,22 +9,43 @@ function handleSheetData(sheetData) {
         return rowData;
     });
 
-    // Here we have the data in JSON format
-    console.log(jsonData);
+    // Filter events for the current week
+    const startOfWeek = moment().startOf('week');
+    const endOfWeek = moment().endOf('week');
+    const weeklyEvents = jsonData.filter(event => {
+        const eventDate = moment(event.Date, 'M/D/YYYY');
+        return eventDate.isBetween(startOfWeek, endOfWeek, null, '[]');
+    });
 
-    // TODO: Use jsonData as needed
+    // Map events to calendar format
+    const calendarEvents = weeklyEvents.map(event => ({
+        title: event['Event Title'],
+        start: moment(event.Date, 'M/D/YYYY').format('YYYY-MM-DD'),
+        description: event['Event Description'],
+        location: event.Location
+    }));
+
+    // Initialize calendar
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: ['dayGrid'],
+        defaultView: 'dayGridWeek',
+        events: calendarEvents
+    });
+
+    calendar.render();
 }
 
-// This function will load the Google Sheet data
+
+
 function loadGoogleSheetData() {
     const spreadsheetId = '1Fb7arltsEVfxRTm8o5wJ12Gb90n-oyWgA1po6jAB2ts';
-    const apiKey = 'AIzaSyB1RrNZJCDKBkWl4htKf3C0VtuGSj4LZ2s'; // Replace with your actual API key
-    const range = 'Sheet1'; // Update the range to include all columns we need
+    const apiKey = 'AIzaSyB1RrNZJCDKBkWl4htKf3C0VtuGSj4LZ2s'; 
+    const range = 'Sheet1'; 
 
-    // Construct the URL for the Google Sheets API request
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
 
-    // Fetch the data
+
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -34,13 +54,10 @@ function loadGoogleSheetData() {
             return response.json();
         })
         .then(data => {
-            // Pass the sheet data to the handler function
             handleSheetData(data);
         })
         .catch(error => {
             console.error('Error:', error);
         });
 }
-
-// Call the function to load the data
 loadGoogleSheetData();
